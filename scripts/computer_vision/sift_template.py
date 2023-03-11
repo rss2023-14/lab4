@@ -14,6 +14,7 @@ import pdb
 #  v
 #  v
 ###############################################################
+glob = 0
 
 def image_print(img):
 	"""
@@ -42,12 +43,12 @@ def cd_sift_ransac(img, template):
 	sift = cv2.xfeatures2d.SIFT_create()
 
 	# Compute SIFT on template and test image
-	kp1, des1 = sift.detectAndCompute(template,None)
-	kp2, des2 = sift.detectAndCompute(img,None)
+	kp1, des1 = sift.detectAndCompute(template,None) #keypoints and descriptors for query image
+	kp2, des2 = sift.detectAndCompute(img,None) #train image(the actual scene)
 
 	# Find matches
 	bf = cv2.BFMatcher()
-	matches = bf.knnMatch(des1,des2,k=2)
+	matches = bf.knnMatch(des1,des2,k=2) #give the best k matches 
 
 	# Find and store good matches
 	good = []
@@ -55,10 +56,16 @@ def cd_sift_ransac(img, template):
 		if m.distance < 0.75*n.distance:
 			good.append(m)
 
+	global glob
+	glob = glob + 1
+
 	# If enough good matches, find bounding box
 	if len(good) > MIN_MATCH:
 		src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
 		dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
+		#print(np.array(good[0].trainIdx))
+		#print(dst_pts[:5])
+		#print('printed')
 
 		# Create mask
 		M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
@@ -69,15 +76,45 @@ def cd_sift_ransac(img, template):
 
 		########## YOUR CODE STARTS HERE ##########
 
-		x_min = y_min = x_max = y_max = 0
+		x_min = y_min = float('inf')
+		x_max = y_max = 0
 
+		transformed = np.int32(cv2.perspectiveTransform(pts, M))
+		#transformed += (w, 0)  # adding offset
+
+		for element in transformed:
+			x,y = element[0]
+			if x > x_max:
+				x_max = x 
+			if 0 < x < x_min:
+				x_min = x 
+			if y > y_max:
+				y_max = y
+			if 0 < y < y_min:
+				y_min = y 
+
+		# draw_params = dict(matchColor = (0,255,0), # draw matches in green color
+        #        singlePointColor = None,
+        #        matchesMask = matchesMask, # draw only inliers
+        #        flags = 2)
+
+		# img3 = cv2.drawMatches(template,kp1,img,kp2,good, None,**draw_params)
+
+		boxed = cv2.polylines(img, [transformed], True, (0,0,255),3, cv2.LINE_AA) #the image with the box on the sign 
+		#next_one = cv2.rectangle(boxed, (x_min, y_min), (x_max, y_max), (0,255,0), 3)
+
+		# if (glob == 11):
+		# 	cv2.imshow("result", boxed)
+		# 	cv2.waitKey()
 		########### YOUR CODE ENDS HERE ###########
 
 		# Return bounding box
+		#print(glob, (x_min, y_min), (x_max, y_max))
+		
 		return ((x_min, y_min), (x_max, y_max))
 	else:
 
-		print "[SIFT] not enough matches; matches: ", len(good)
+		print ("[SIFT] not enough matches; matches:", len(good))
 
 		# Return bounding box of area 0 if no match found
 		return ((0,0), (0,0))
