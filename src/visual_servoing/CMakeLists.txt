@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   ackermann_msgs
   visualization_msgs
+  message_generation
 )
 
 add_message_files(
@@ -38,6 +39,7 @@ catkin_package(CATKIN_DEPENDS
   geometry_msgs
   ackermann_msgs
   visualization_msgs
+  message_runtime
 )
 
 include_directories(
