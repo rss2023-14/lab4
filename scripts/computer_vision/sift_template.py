@@ -2,6 +2,8 @@ import cv2
 import imutils
 import numpy as np
 import pdb
+from matplotlib import pyplot as plt
+
 
 #################### X-Y CONVENTIONS #########################
 # 0,0  X  > > > > >
@@ -103,9 +105,9 @@ def cd_sift_ransac(img, template):
 		boxed = cv2.polylines(img, [transformed], True, (0,0,255),3, cv2.LINE_AA) #the image with the box on the sign 
 		#next_one = cv2.rectangle(boxed, (x_min, y_min), (x_max, y_max), (0,255,0), 3)
 
-		# if (glob == 11):
-		# 	cv2.imshow("result", boxed)
-		# 	cv2.waitKey()
+		if (glob == 1):
+			cv2.imshow("result", boxed)
+			cv2.waitKey()
 		########### YOUR CODE ENDS HERE ###########
 
 		# Return bounding box
@@ -152,10 +154,27 @@ def cd_template_matching(img, template):
 		########## YOUR CODE STARTS HERE ##########
 		# Use OpenCV template matching functions to find the best match
 		# across template scales.
+		# ratio = float(template.shape[1])/float(resized_template.shape[1])
+		result = cv2.matchTemplate(img_canny, resized_template, cv2.TM_CCORR_NORMED)
+		min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+		if best_match is None or max_val > best_match[0]:
+			best_match = (max_val, max_loc, w, h)
+		
+	_, max_loc, w, h = best_match
+	x_min, y_min = max_loc
+	#print(max_loc, w, h)
+	x_max, y_max = (max_loc[0]+w), (max_loc[1]+h)
+
+	cv2.rectangle(img_canny, (x_min, y_min), (x_max, y_max), 255, 2)
+	bounding_box = ((x_min,y_min),(x_max, y_max))
+	#print(bounding_box)
+	# cv2.imshow("Image", img_canny)
+	# cv2.waitKey(0)
 
 		# Remember to resize the bounding box using the highest scoring scale
 		# x1,y1 pixel will be accurate, but x2,y2 needs to be correctly scaled
-		bounding_box = ((0,0),(0,0))
+
 		########### YOUR CODE ENDS HERE ###########
 
 	return bounding_box
