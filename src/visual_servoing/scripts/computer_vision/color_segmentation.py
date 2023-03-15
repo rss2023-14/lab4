@@ -33,11 +33,22 @@ def cd_color_segmentation(img, template):
 		bbox: ((x1, y1), (x2, y2)); the bounding box of the cone, unit in px
 				(x1, y1) is the top left of the bbox and (x2, y2) is the bottom right of the bbox
 	"""
-	########## YOUR CODE STARTS HERE ##########
+	hsv_img = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
-	bounding_box = ((0,0),(0,0))
+	min_orange = np.array([9,100,185])  #hsv
+	max_orange = np.array([30,255,255]) #hsv 
+	# min_orange = np.array([0,0,185]) #rgb
+	# max_orange = np.array([100,255,255]) #rgb
+	
+	mask = cv2.inRange(hsv_img,min_orange,max_orange)  # hsv
+	
+	contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+	cone_contour = max(contours, key=cv2.contourArea)
+	x,y,w,h = cv2.boundingRect(cone_contour)
 
-	########### YOUR CODE ENDS HERE ###########
+	boundingbox = ((x,y),(x+w,y+h))
 
-	# Return bounding box
-	return bounding_box
+	
+
+	return boundingbox
+
