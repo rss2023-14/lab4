@@ -29,7 +29,7 @@ def image_print(img):
 	cv2.imshow(winname, img)
 	cv2.waitKey()
 	cv2.destroyAllWindows()
-
+	
 def cd_sift_ransac(img, template):
 	"""
 	Implement the cone detection using SIFT + RANSAC algorithm
@@ -84,15 +84,18 @@ def cd_sift_ransac(img, template):
 		transformed = np.int32(cv2.perspectiveTransform(pts, M))
 		#transformed += (w, 0)  # adding offset
 
+		# x_min, y_min = transformed.min(axis = 0)[0]
+		# x_max, y_max = transformed.max(axis = 0)[0]
+
 		for element in transformed:
 			x,y = element[0]
 			if x > x_max:
 				x_max = x 
-			if 0 < x < x_min:
+			if x < x_min:
 				x_min = x 
 			if y > y_max:
 				y_max = y
-			if 0 < y < y_min:
+			if y < y_min:
 				y_min = y 
 
 		# draw_params = dict(matchColor = (0,255,0), # draw matches in green color
@@ -105,9 +108,10 @@ def cd_sift_ransac(img, template):
 		boxed = cv2.polylines(img, [transformed], True, (0,0,255),3, cv2.LINE_AA) #the image with the box on the sign 
 		#next_one = cv2.rectangle(boxed, (x_min, y_min), (x_max, y_max), (0,255,0), 3)
 
-		if (glob == 1):
-			cv2.imshow("result", boxed)
-			cv2.waitKey()
+		# if (glob == 11):
+		# 	#print((x_min, y_min), (x_max, y_max))
+		# 	cv2.imshow("result", boxed)
+		# 	cv2.waitKey()
 		########### YOUR CODE ENDS HERE ###########
 
 		# Return bounding box
