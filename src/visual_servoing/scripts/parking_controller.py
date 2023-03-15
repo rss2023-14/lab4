@@ -15,7 +15,7 @@ class ParkingController():
     """
 
     def __init__(self):
-        rospy.loginfo("init!")
+        # rospy.loginfo("init!")
         rospy.Subscriber("/relative_cone", ConeLocation,
                          self.relative_cone_callback)
 
@@ -65,11 +65,11 @@ class ParkingController():
         self.prev_dist_err = dist_err
         self.prev_theta_err = theta_err
 
-        rospy.loginfo("------------")
-        rospy.loginfo("dist %s", dist_err)
-        rospy.loginfo("theta %s", theta_err)
-        rospy.loginfo("x %s", self.relative_x)
-        rospy.loginfo("y %s", self.relative_y)
+        # rospy.loginfo("------------")
+        # rospy.loginfo("dist %s", dist_err)
+        # rospy.loginfo("theta %s", theta_err)
+        # rospy.loginfo("x %s", self.relative_x)
+        # rospy.loginfo("y %s", self.relative_y)
 
         drive_cmd = AckermannDriveStamped()
         drive_cmd.header.stamp = rospy.Time.now()
@@ -113,15 +113,18 @@ class ParkingController():
 
         #################################
 
+        error_msg.x_error = self.relative_x
+        error_msg.y_error = self.relative_y
+        error_msg.distance_error = np.sqrt(
+            (self.relative_x**2.0)+(self.relative_y**2.0))
+
         self.error_pub.publish(error_msg)
 
 
 if __name__ == '__main__':
     try:
         rospy.init_node('ParkingController', anonymous=True)
-        rospy.loginfo("Safd!")
         ParkingController()
         rospy.spin()
     except rospy.ROSInterruptException:
-        rospy.loginfo("Safet engaged!")
         pass
