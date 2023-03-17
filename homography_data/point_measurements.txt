@@ -1,7 +1,7 @@
 Points as measured from the left camera on zed sensor. No z info captured
 (although it should all be equal as height of zed sensor on car).
 
-inches
+REAL_LIFE_DISTANCE (inches)
 1: x=15.5  y=4
 2: x=17.75 y=-3.5
 3: x=13    y=-9.5
@@ -11,3 +11,14 @@ inches
 7: x=24.5  y=-16
 8: x=41.75 y=2.25
 9: x=39.5  y=-8
+
+PIXEL_DATA (px)
+1: 223, 321
+2: 366, 294
+3: 515, 328
+4: 155, 274
+5: 285, 260
+6: 379, 246
+7: 524, 253
+8: 300, 218
+9: 388, 219
