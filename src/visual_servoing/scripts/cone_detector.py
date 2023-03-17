@@ -2,6 +2,7 @@
 
 import numpy as np
 import rospy
+import math 
 
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
@@ -51,28 +52,44 @@ class ConeDetector():
 
         hsv_img = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
 
-        min_orange = np.array([9,100,185])  #hsv
-        max_orange = np.array([30,255,255]) #hsv 
-        # min_orange = np.array([0,0,185]) #rgb
-        # max_orange = np.array([100,255,255]) #rgb
+        min_orange = np.array([5,100,160])  #hsv
+        max_orange = np.array([25,255,255]) #hsv 
+        # how much of the top do we want to black out?
+        if self.LineFollower():
+            portion_top = 0.7
+        else:
+            portion_top = 0.35
+        #filter out designated top portion of image
+        height,width, _ = hsv_img.shape
+        num_r = math.ceil(portion_top*height)
+        mask_top = np.ones_like(hsv_img) * 255
+        mask_top[:num_r,:,:] = 0 
+        hsv_img = cv2.bitwise_and(hsv_img,mask_top)
+	
         
         mask = cv2.inRange(hsv_img,min_orange,max_orange)  # hsv
         
-        tmp1, contours, tmp2 = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+        im2, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         cone_contour = max(contours, key=cv2.contourArea)
         x,y,w,h = cv2.boundingRect(cone_contour)
 
         boundingbox = ((x,y),(x+w,y+h))
         x_bot = (2*x+w)/2
+        y_top = y
         y_bot = y+h
         msg = ConeLocationPixel()
 
-        cent_bot = (x_bot, y_bot)
+        if self.LineFollower(): 
+            msg.u = x_bot
+            msg.v = y_top
+        else:
+            msg.u = x_bot
+            msg.v = y_bot
 
-        msg.u = x_bot
-        msg.v = y_bot
-        rospy.loginfo("x_position: %f", x_bot)
-        rospy.loginfo("y_position: %f", y_bot)
+        
+        
+
+        
         self.cone_pub.publish(msg)
 if __name__ == '__main__':
     try:
