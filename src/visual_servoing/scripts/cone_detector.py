@@ -71,6 +71,8 @@ class ConeDetector():
 
         msg.u = x_bot
         msg.v = y_bot
+        rospy.loginfo("x_position: %f", x_bot)
+        rospy.loginfo("y_position: %f", y_bot)
         self.cone_pub.publish(msg)
 if __name__ == '__main__':
     try:
