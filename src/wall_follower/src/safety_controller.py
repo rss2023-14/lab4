@@ -72,7 +72,8 @@ def safety_control(ackermann, lidar_data, pub):
             msg.drive.acceleration = 0.0
             msg.drive.jerk = 0.0
 
-            pub.publish(msg)
+	    # DEBUGGING: LIDAR HAS ERRONEOUS POINTS - BREAKS SAFETY CONTROLLER
+            # pub.publish(msg)
             break
 
 
