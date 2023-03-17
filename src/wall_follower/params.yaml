@@ -1,0 +1,20 @@
+# base params
+wall_follower/scan_topic: "/scan"
+wall_follower/drive_topic: "/vesc/ackermann_cmd_mux/input/navigation"
+wall_follower/side: -1 # 1=left, -1=right
+wall_follower/velocity: 1.0 # m/s
+wall_follower/desired_distance: 1. # m
+
+# wall follower params
+wall_follower/Kp: 1.40
+wall_follower/Ki: 0.000007
+wall_follower/Kd: 0.002
+wall_follower/integral_limit: 0.15
+wall_follower/distance_threshold: 0.18 # m
+
+# safety controller params
+safety_controller/look_ahead_time: 0.5 # s
+safety_controller/half_car_width: 0.2 # m
+
+# metrics params
+metrics/alpha: 1.0
