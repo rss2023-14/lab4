@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /TF1
         - /TF1/Frames1
       Splitter Ratio: 0.5
     Tree Height: 549
@@ -103,19 +104,42 @@ Visualization Manager:
           Value: true
         laser:
           Value: false
+        map:
+          Value: false
+        odom:
+          Value: false
+        zed_camera_center:
+          Value: false
+        zed_left_camera_frame:
+          Value: false
+        zed_left_camera_optical_frame:
+          Value: false
+        zed_right_camera_frame:
+          Value: false
+        zed_right_camera_optical_frame:
+          Value: false
       Marker Scale: 3.5
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        base_link:
-          base_footprint:
-            {}
-          base_imu_link:
-            {}
-          laser:
-            {}
+        map:
+          odom:
+            base_link:
+              base_footprint:
+                {}
+              base_imu_link:
+                {}
+              laser:
+                {}
+              zed_camera_center:
+                zed_left_camera_frame:
+                  zed_left_camera_optical_frame:
+                    {}
+                zed_right_camera_frame:
+                  zed_right_camera_optical_frame:
+                    {}
       Update Interval: 0
       Value: true
     - Class: rviz/Marker
@@ -123,7 +147,7 @@ Visualization Manager:
       Marker Topic: /cone_marker
       Name: Marker
       Namespaces:
-        {}
+        "": true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -191,4 +215,4 @@ Window Geometry:
     collapsed: false
   Width: 1267
   X: 110
-  Y: 28
+  Y: 0
