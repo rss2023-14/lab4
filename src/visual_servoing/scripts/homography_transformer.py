@@ -12,6 +12,8 @@ from ackermann_msgs.msg import AckermannDriveStamped
 from visualization_msgs.msg import Marker
 from visual_servoing.msg import ConeLocation, ConeLocationPixel
 
+# See lab4/homography_data for images and data used
+
 #The following collection of pixel locations and corresponding relative
 #ground plane locations are used to compute our homography matrix
 
@@ -19,22 +21,30 @@ from visual_servoing.msg import ConeLocation, ConeLocationPixel
 # see README.md for coordinate frame description
 
 ######################################################
-## DUMMY POINTS -- ENTER YOUR MEASUREMENTS HERE
-PTS_IMAGE_PLANE = [[-1, -1],
-                   [-1, -1],
-                   [-1, -1],
-                   [-1, -1]] # dummy points
+PTS_IMAGE_PLANE = [[223, 321],
+                   [366, 294],
+                   [515, 328],
+                   [155, 274],
+                   [285, 260],
+                   [379, 246],
+                   [524, 253],
+                   [300, 218],
+                   [388, 219]]
 ######################################################
 
 # PTS_GROUND_PLANE units are in inches
 # car looks along positive x axis with positive y axis to left
 
 ######################################################
-## DUMMY POINTS -- ENTER YOUR MEASUREMENTS HERE
-PTS_GROUND_PLANE = [[-1, -1],
-                    [-1, -1],
-                    [-1, -1],
-                    [-1, -1]] # dummy points
+PTS_GROUND_PLANE = [[15.5,   4.0],
+                    [17.75, -3.5],
+                    [13.0,  -9.5],
+                    [22.0,   10.75],
+                    [24.5,   2.0],
+                    [28.0,  -5.5],
+                    [24.5,  -16.0],
+                    [41.75,  2.25],
+                    [39.5,  -8.0]]
 ######################################################
 
 METERS_PER_INCH = 0.0254
@@ -70,6 +80,9 @@ class HomographyTransformer:
 
         #Call to main function
         x, y = self.transformUvToXy(u, v)
+
+        # Draw cone in rviz, what is the zed sensor frame name?
+        # self.draw_marker(x, y, "zed_sensor_frame")
 
         #Publish relative xy position of object in real world
         relative_xy_msg = ConeLocation()
