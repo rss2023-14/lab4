@@ -49,7 +49,29 @@ class ConeDetector():
         debug_msg = self.bridge.cv2_to_imgmsg(image, "bgr8")
         self.debug_pub.publish(debug_msg)
 
+        hsv_img = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
 
+        min_orange = np.array([9,100,185])  #hsv
+        max_orange = np.array([30,255,255]) #hsv 
+        # min_orange = np.array([0,0,185]) #rgb
+        # max_orange = np.array([100,255,255]) #rgb
+        
+        mask = cv2.inRange(hsv_img,min_orange,max_orange)  # hsv
+        
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+        cone_contour = max(contours, key=cv2.contourArea)
+        x,y,w,h = cv2.boundingRect(cone_contour)
+
+        boundingbox = ((x,y),(x+w,y+h))
+        x_bot = (2*x+w)/2
+        y_bot = y+h
+        msg = ConeLocationPixel()
+
+        cent_bot = (x_bot, y_bot)
+
+        msg.u = x_bot
+        msg.v = y_bot
+        self.cone_pub.publish(msg)
 if __name__ == '__main__':
     try:
         rospy.init_node('ConeDetector', anonymous=True)
