@@ -1,0 +1,5 @@
+<launch>
+  <!-- Launch only the safety controller with parameters -->
+  <node pkg="wall_follower" name="safety_controller" type="safety_controller.py" output="screen"/>
+  <rosparam command="load" file="$(find wall_follower)/params.yaml"/>
+</launch>

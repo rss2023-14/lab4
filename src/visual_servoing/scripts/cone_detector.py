@@ -58,7 +58,7 @@ class ConeDetector():
         
         mask = cv2.inRange(hsv_img,min_orange,max_orange)  # hsv
         
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+        tmp1, contours, tmp2 = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         cone_contour = max(contours, key=cv2.contourArea)
         x,y,w,h = cv2.boundingRect(cone_contour)
 

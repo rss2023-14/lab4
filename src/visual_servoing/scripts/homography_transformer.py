@@ -82,7 +82,7 @@ class HomographyTransformer:
         x, y = self.transformUvToXy(u, v)
 
         # Draw cone in rviz, what is the zed sensor frame name?
-        # self.draw_marker(x, y, "zed_sensor_frame")
+        self.draw_marker(x, y, "base_link")
 
         #Publish relative xy position of object in real world
         relative_xy_msg = ConeLocation()
