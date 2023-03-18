@@ -50,7 +50,7 @@ class ConeDetector():
         max_orange = np.array([25,255,255]) #hsv 
         # how much of the image do we want to black out?
         if self.LineFollower():
-            portion_top = 0.55
+            portion_top = 0.6
             bottom_height = math.ceil(0.15*height)
             hsv_img[height-bottom_height:height,:,:]=0
         else:
