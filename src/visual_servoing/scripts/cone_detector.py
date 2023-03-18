@@ -65,7 +65,11 @@ class ConeDetector():
         mask_top = np.ones_like(hsv_img) * 255
         mask_top[:num_r,:,:] = 0 
         hsv_img = cv2.bitwise_and(hsv_img,mask_top)
-	
+        kernel =  np.ones((3,3), np.uint8)
+        # erode and dilate image
+        hsv_img = cv2.erode(hsv_img,kernel,iterations=1)
+        hsv_img = cv2.dilate(hsv_img,kernel,iterations=3)
+        
         
         mask = cv2.inRange(hsv_img,min_orange,max_orange)  # hsv
         
