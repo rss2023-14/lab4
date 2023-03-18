@@ -38,12 +38,6 @@ class ConeDetector():
         # publish this pixel (u, v) to the /relative_cone_px topic; the homography transformer will
         # convert it to the car frame.
 
-        #################################
-        # YOUR CODE HERE
-        # detect the cone and publish its
-        # pixel location in the image.
-        # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-        #################################
 
         image = self.bridge.imgmsg_to_cv2(image_msg, "bgr8")
 
@@ -54,7 +48,7 @@ class ConeDetector():
 
         min_orange = np.array([5,100,160])  #hsv
         max_orange = np.array([25,255,255]) #hsv 
-        # how much of the top do we want to black out?
+        # how much of the image do we want to black out?
         if self.LineFollower():
             portion_top = 0.55
             bottom_height = math.ceil(0.15*height)
