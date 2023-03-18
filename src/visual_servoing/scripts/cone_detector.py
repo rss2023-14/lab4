@@ -70,22 +70,33 @@ class ConeDetector():
         mask = cv2.inRange(hsv_img,min_orange,max_orange)  # hsv
         
         im2, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-        cone_contour = max(contours, key=cv2.contourArea)
-        x,y,w,h = cv2.boundingRect(cone_contour)
+        cone = True
+        try:
+            cone_contour = max(contours, key=cv2.contourArea)
+        except:
+            ValueError
+            cone = False
+        if cone:
+            x,y,w,h = cv2.boundingRect(cone_contour)
 
-        boundingbox = ((x,y),(x+w,y+h))
-        x_bot = (2*x+w)/2
-        y_top = y
-        y_bot = y+h
-        msg = ConeLocationPixel()
+            boundingbox = ((x,y),(x+w,y+h))
+            x_bot = (2*x+w)/2
+            y_top = y
+            y_bot = y+h
+            msg = ConeLocationPixel()
 
-        if self.LineFollower(): 
-            msg.u = x_bot
-            msg.v = y_top
+            if self.LineFollower(): 
+                msg.u = x_bot
+                msg.v = y_top
+            else:
+                msg.u = x_bot
+                msg.v = y_bot
         else:
-            msg.u = x_bot
-            msg.v = y_bot
-
+            row_index = int(0.9*height)
+            row = hsv_img[row_index,:]
+            center = np.argmax(row)
+            msg.u = center
+            msg.v = row_index
         
         
 
