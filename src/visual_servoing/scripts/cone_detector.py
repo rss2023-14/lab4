@@ -77,13 +77,14 @@ class ConeDetector():
         except:
             ValueError
             cone = False
+
+        msg = ConeLocationPixel()
         if cone:
             x,y,w,h = cv2.boundingRect(cone_contour)
 
             boundingbox = ((x,y),(x+w,y+h))
             x_bot = (2*x+w)/2
             y_bot = y+h
-            msg = ConeLocationPixel()
 
             msg.u = x_bot
             msg.v = y_bot
