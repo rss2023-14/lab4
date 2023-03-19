@@ -16,8 +16,15 @@ class ParkingController():
 
     def __init__(self):
         # rospy.loginfo("init!")
-        rospy.Subscriber("/relative_cone", ConeLocation,
-                         self.relative_cone_callback)
+
+        self.cone_mode = False
+
+        if self.cone_mode:
+            rospy.Subscriber("/relative_cone", ConeLocation,
+                             self.relative_cone_callback)
+        else:
+            rospy.Subscriber("/relative_cone", ConeLocation,
+                             self.relative_line_callback)
 
         # set in launch file; different for simulator vs racecar
         DRIVE_TOPIC = rospy.get_param("~drive_topic")
@@ -26,7 +33,7 @@ class ParkingController():
         self.error_pub = rospy.Publisher("/parking_error",
                                          ParkingError, queue_size=10)
 
-        self.parking_distance = 0.0  # meters; try playing with this number!
+        self.parking_distance = 0.75  # meters; try playing with this number!
         self.relative_x = 0
         self.relative_y = 0
 
@@ -82,6 +89,67 @@ class ParkingController():
             drive_cmd.drive.speed = 1.0
         elif dist_err > 0.02:
             drive_cmd.drive.speed = dist_err
+        elif dist_err > -0.02:
+            drive_cmd.drive.speed = 0.0
+        else:
+            drive_cmd.drive.speed = dist_err
+            drive_cmd.drive.steering_angle = -drive_cmd.drive.steering_angle
+
+        drive_cmd.drive.steering_angle_velocity = 0.0
+        drive_cmd.drive.acceleration = 0.0
+        drive_cmd.drive.jerk = 0.0
+        #################################
+
+        # YOUR CODE HERE
+        # Use relative position and your control law to set drive_cmd
+
+        #################################
+
+        self.drive_pub.publish(drive_cmd)
+        self.error_publisher()
+
+    def relative_line_callback(self, msg):
+        time = rospy.Time.now()
+
+        dt = (time - self.prev_time).to_sec()
+
+        self.prev_time = time
+
+        # pos x in front
+        self.relative_x = msg.x_pos
+        # pos y to left
+        self.relative_y = msg.y_pos
+
+        dist = np.sqrt((self.relative_x**2.0)+(self.relative_y**2.0))
+        dist_err = dist
+
+        # pos theta to left
+        theta_err = np.arctan2(self.relative_y, self.relative_x)
+
+        self.running_theta_err += theta_err
+        self.running_dist_err += dist_err
+
+        d_theta_dt = (theta_err - self.prev_theta_err) / dt
+        d_dist_dt = (dist_err - self.prev_dist_err) / dt
+
+        self.prev_dist_err = dist_err
+        self.prev_theta_err = theta_err
+
+        # rospy.loginfo("------------")
+        # rospy.loginfo("dist %s", dist_err)
+        # rospy.loginfo("theta %s", theta_err)
+        # rospy.loginfo("x %s", self.relative_x)
+        # rospy.loginfo("y %s", self.relative_y)
+
+        drive_cmd = AckermannDriveStamped()
+        drive_cmd.header.stamp = rospy.Time.now()
+        drive_cmd.header.frame_id = "base_link"
+
+        drive_cmd.drive.steering_angle = 0.5 * theta_err + \
+            0.0 * d_theta_dt + 0.0 * self.running_theta_err
+
+        if dist_err > 1.0:
+            drive_cmd.drive.speed = 1.0
         elif dist_err > -0.02:
             drive_cmd.drive.speed = 0.0
         else:
