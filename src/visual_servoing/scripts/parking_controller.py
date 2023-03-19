@@ -148,13 +148,7 @@ class ParkingController():
         drive_cmd.drive.steering_angle = 0.5 * theta_err + \
             0.0 * d_theta_dt + 0.0 * self.running_theta_err
 
-        if dist_err > 1.0:
-            drive_cmd.drive.speed = 1.0
-        elif dist_err > -0.02:
-            drive_cmd.drive.speed = 0.0
-        else:
-            drive_cmd.drive.speed = dist_err
-            drive_cmd.drive.steering_angle = -drive_cmd.drive.steering_angle
+        drive_cmd.drive.speed = 1.0
 
         drive_cmd.drive.steering_angle_velocity = 0.0
         drive_cmd.drive.acceleration = 0.0
