@@ -17,6 +17,7 @@ class ParkingController():
     def __init__(self):
         # rospy.loginfo("init!")
 
+        # determines if we are cone following or line following
         self.cone_mode = False
 
         if self.cone_mode:
@@ -98,12 +99,6 @@ class ParkingController():
         drive_cmd.drive.steering_angle_velocity = 0.0
         drive_cmd.drive.acceleration = 0.0
         drive_cmd.drive.jerk = 0.0
-        #################################
-
-        # YOUR CODE HERE
-        # Use relative position and your control law to set drive_cmd
-
-        #################################
 
         self.drive_pub.publish(drive_cmd)
         self.error_publisher()
@@ -148,17 +143,11 @@ class ParkingController():
         drive_cmd.drive.steering_angle = 0.5 * theta_err + \
             0.0 * d_theta_dt + 0.0 * self.running_theta_err
 
-        drive_cmd.drive.speed = 1.0
+        drive_cmd.drive.speed = 0.5
 
         drive_cmd.drive.steering_angle_velocity = 0.0
         drive_cmd.drive.acceleration = 0.0
         drive_cmd.drive.jerk = 0.0
-        #################################
-
-        # YOUR CODE HERE
-        # Use relative position and your control law to set drive_cmd
-
-        #################################
 
         self.drive_pub.publish(drive_cmd)
         self.error_publisher()
@@ -169,13 +158,6 @@ class ParkingController():
         with rqt_plot to plot the success of the controller
         """
         error_msg = ParkingError()
-
-        #################################
-
-        # YOUR CODE HERE
-        # Populate error_msg with relative_x, relative_y, sqrt(x^2+y^2)
-
-        #################################
 
         error_msg.x_error = self.relative_x
         error_msg.y_error = self.relative_y
