@@ -49,7 +49,7 @@ class ConeDetector():
         min_orange = np.array([5,100,160])  #hsv
         max_orange = np.array([25,255,255]) #hsv 
         # how much of the image do we want to black out?
-        if self.LineFollower():
+        if self.LineFollower:
             portion_top = 0.6
             bottom_height = math.ceil(0.15*height)
             hsv_img[height-bottom_height:height,:,:]=0
@@ -58,7 +58,7 @@ class ConeDetector():
             
         #filter out designated top portion of image
         height,width, _ = hsv_img.shape
-        num_r = math.ceil(portion_top*height)
+        num_r = int(math.ceil(portion_top*height))
         mask_top = np.ones_like(hsv_img) * 255
         mask_top[:num_r,:,:] = 0 
         hsv_img = cv2.bitwise_and(hsv_img,mask_top)
