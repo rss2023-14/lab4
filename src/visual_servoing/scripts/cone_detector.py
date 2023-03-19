@@ -23,7 +23,7 @@ class ConeDetector():
     """
     def __init__(self):
         # toggle line follower vs cone parker
-        self.LineFollower = False
+        self.LineFollower = True
 
         # Subscribe to ZED camera RGB frames
         self.cone_pub = rospy.Publisher("/relative_cone_px", ConeLocationPixel, queue_size=10)
@@ -45,19 +45,19 @@ class ConeDetector():
         self.debug_pub.publish(debug_msg)
 
         hsv_img = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
+        height,width, _ = hsv_img.shape
 
         min_orange = np.array([5,100,160])  #hsv
         max_orange = np.array([25,255,255]) #hsv 
         # how much of the image do we want to black out?
         if self.LineFollower:
             portion_top = 0.6
-            bottom_height = math.ceil(0.15*height)
+            bottom_height = int(math.ceil(0.15*height))
             hsv_img[height-bottom_height:height,:,:]=0
         else:
             portion_top = 0.35
             
         #filter out designated top portion of image
-        height,width, _ = hsv_img.shape
         num_r = int(math.ceil(portion_top*height))
         mask_top = np.ones_like(hsv_img) * 255
         mask_top[:num_r,:,:] = 0 

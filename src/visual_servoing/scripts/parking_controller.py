@@ -140,10 +140,10 @@ class ParkingController():
         drive_cmd.header.stamp = rospy.Time.now()
         drive_cmd.header.frame_id = "base_link"
 
-        drive_cmd.drive.steering_angle = 0.5 * theta_err + \
-            0.0 * d_theta_dt + 0.0 * self.running_theta_err
+        drive_cmd.drive.steering_angle = 0.4 * theta_err + \
+            0.01 * d_theta_dt + 0.0 * self.running_theta_err
 
-        drive_cmd.drive.speed = 0.5
+        drive_cmd.drive.speed = 2.0
 
         drive_cmd.drive.steering_angle_velocity = 0.0
         drive_cmd.drive.acceleration = 0.0
